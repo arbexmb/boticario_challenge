@@ -1,0 +1,45 @@
+Arguments: 
+  /usr/bin/node /usr/share/yarn/bin/yarn.js
+
+PATH: 
+  /home/lbrazao/.rvm/gems/ruby-2.6.5/bin:/home/lbrazao/.rvm/gems/ruby-2.6.5@global/bin:/home/lbrazao/.rvm/rubies/ruby-2.6.5/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/lbrazao/.rvm/bin:/home/lbrazao/.rvm/bin:/home/lbrazao/.rvm/bin:/home/lbrazao/.rvm/bin:/home/lbrazao/.rvm/bin
+
+Yarn version: 
+  1.22.0
+
+Node version: 
+  10.19.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  SyntaxError: /home/lbrazao/Desenvolvimento/boticario_challenge/package.json: Unexpected string in JSON at position 100
+      at JSON.parse (<anonymous>)
+      at /usr/share/yarn/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/share/yarn/lib/cli.js:310:30)
+      at /usr/share/yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "boticario_challenge",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT"
+    "dependencies": {
+      "bcrypt": "^4.0.1",
+      "body-parser": "^1.19.0",
+      "express": "^4.17.1",
+      "mongoose": "5.9.3"
+    },
+    "devDependencies": {
+      "nodemon": "^2.0.2"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
