@@ -22,7 +22,11 @@ const RetailerSchema = new Schema(
     status: {
       type: String,
       default: 'Em validação'
-    }
+    },
+    purchases: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Purchase'
+    }]
   }
 );
 

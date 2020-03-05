@@ -24,6 +24,21 @@ class RetailerController {
       res.status(201).json({ success: 'Retailer successfully created.' });
     });
   }
+
+  async purchases(req, res) {
+    //const retailer = await Retailer.findById(req.params['id'], (err, retailer) => {
+    //  if(err) {
+    //    return res.send({ error: err.message });
+    //  }
+
+    //  res.send(retailer.purchases);
+    //});
+    const retailer = await Retailer.findById(req.params['id']).populate('purchases').then((results) => {
+      res.json(results);
+    }).catch((err) => {
+      res.status(500).json({err});
+    });
+  }
 }
 
 module.exports = new RetailerController();
