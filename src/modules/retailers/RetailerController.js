@@ -1,4 +1,5 @@
 const Retailer = require('./Retailer');
+const bcrypt = require('bcrypt');
 
 class RetailerController {
   async index(req, res) {
@@ -11,28 +12,54 @@ class RetailerController {
   }
 
   async store(req, res) {
-    const { name, cpf, email, password } = req.body;
+    try {
 
-    if(req.body.cpf === '153.509.460-56') {
-      req.body.status = 'Aprovado';
-    }
+      const salt = await bcrypt.genSalt();
+      const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-    const response = await Retailer.create(req.body, (err, response) => {
-      if(err) {
-        return res.send({ error: err.message });
+      const retailer = {
+        name: req.body.name, 
+        cpf: req.body.cpf, 
+        email: req.body.email, 
+        password: hashedPassword
+      };
+
+      if(req.body.cpf === '153.509.460-56') {
+        req.body.status = 'Aprovado';
       }
-      res.status(201).json({ success: 'Retailer successfully created.' });
+
+      const response = await Retailer.create(retailer, (err, response) => {
+        if(err) {
+          return res.send({ error: err.message });
+        }
+        res.status(201).json({ success: 'Retailer successfully created.' });
+      });
+
+    } catch {
+
+      res.status(500).send();
+
+    }
+  }
+
+  async login(req, res) {
+    const retailer = Retailer.find({cpf: req.body.cpf}, async (err, retailer) => {
+      if(retailer == null) {
+        return res.status(400).send('Cannot find user');
+      }
+      try {
+        if(await bcrypt.compare(req.body.password, retailer[0].password)) {
+          res.status(200).json({success: 'Success'});
+        } else {
+          res.status(401).json({error: 'Not allowed'});
+        }
+      } catch {
+        res.status(500).send();
+      }
     });
   }
 
   async purchases(req, res) {
-    //const retailer = await Retailer.findById(req.params['id'], (err, retailer) => {
-    //  if(err) {
-    //    return res.send({ error: err.message });
-    //  }
-
-    //  res.send(retailer.purchases);
-    //});
     const retailer = await Retailer.findById(req.params['id']).populate('purchases').then((results) => {
       res.json(results);
     }).catch((err) => {
