@@ -49,6 +49,7 @@ class RetailerController {
       }
       try {
         if(await bcrypt.compare(req.body.password, retailer[0].password)) {
+          req.session.retailer = retailer;
           res.status(200).json({success: 'Success'});
         } else {
           res.status(401).json({error: 'Not allowed'});
@@ -60,8 +61,12 @@ class RetailerController {
   }
 
   async purchases(req, res) {
-    const retailer = await Retailer.findById(req.params['id']).populate('purchases').then((results) => {
-      res.json(results);
+    if(!req.session.retailer) {
+      return res.status(401).send();
+    }
+
+    const retailer = await Retailer.findById(req.session.retailer[0]._id).populate('purchases').then((results) => {
+      res.status(200).json(results.purchases);
     }).catch((err) => {
       res.status(500).json({err});
     });
