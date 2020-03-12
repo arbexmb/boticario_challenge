@@ -6,6 +6,7 @@ const app = require('../../../src/app');
 const Retailer = require('../../../src/modules/retailers/Retailer');
 require('dotenv').config();
 
+const agent = request.agent(app);
 const cpf = '842.018.330-03';
 
 describe('RetailerController', () => {
@@ -28,7 +29,7 @@ describe('RetailerController', () => {
     await mongoose.connection.db.dropDatabase();
   });
 
-  it('should insert new retailer via API', async () => {
+  it('should insert new retailer via application', async () => {
     const mockRetailer = {
       'name': faker.name.findName(),
       'cpf': '395.697.988-58',
@@ -86,12 +87,111 @@ describe('RetailerController', () => {
     const retailer = new Retailer(mockRetailer);
     const savedRetailer = await retailer.save();
 
-    return request(app)
+    await agent
       .post('/retailers/login')
       .send({ "cpf": cpf, "password": 'password' })
       .expect(200)
-      .then((res) => {
-        expect(res.body).toHaveProperty('success');
+      .then(async (res) => {
+        await agent
+          .get('/retailers/purchases')
+          .expect(200);
+      });
+  });
+
+  it('a logged in retailer can check its purchases', async () => {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash('password', salt);
+
+    const mockRetailer = {
+      'name': faker.name.findName(),
+      'cpf': cpf,
+      'email': faker.internet.email(),
+      'password': hashedPassword
+    };
+    const retailer = new Retailer(mockRetailer);
+    const savedRetailer = await retailer.save();
+    const cleanCpf = savedRetailer.cpf.replace(/[^\d]+/g,'');
+
+    await agent
+      .post('/retailers/login')
+      .send({"cpf":savedRetailer.cpf,"password":"password"})
+      .expect(200)
+      .then(async () => {
+        await agent
+          .post('/purchases')
+          .send({"value":1234})
+          .expect(201)
+          .then(async () => {
+            await agent
+              .get('/retailers/purchases')
+              .expect(200)
+              .then((res) => {
+                expect(res.body.length).toBe(1);
+                expect(res.body[0].value).toBe(1234);
+              });
+          });
+      });
+  });
+  
+  it('a logged in retailer can check its cashback', async () => {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash('password', salt);
+
+    const mockRetailer = {
+      'name': faker.name.findName(),
+      'cpf': cpf,
+      'email': faker.internet.email(),
+      'password': hashedPassword
+    };
+    const retailer = new Retailer(mockRetailer);
+    const savedRetailer = await retailer.save();
+    const cleanCpf = savedRetailer.cpf.replace(/[^\d]+/g,'');
+
+    await agent
+      .post('/retailers/login')
+      .send({"cpf":savedRetailer.cpf,"password":"password"})
+      .expect(200)
+      .then(async () => {
+        await agent
+          .post('/purchases')
+          .send({"value":500})
+          .expect(201)
+          .then(async () => {
+            await agent
+              .get('/retailers/cashback')
+              .expect(200)
+              .then((res) => {
+                expect(res.body.cashback).toBe(50);
+              });
+          });
+      });
+  });
+
+  it('a logged in retailer can logout of the application', async () => {
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash('password', salt);
+
+    const mockRetailer = {
+      'name': faker.name.findName(),
+      'cpf': cpf,
+      'email': faker.internet.email(),
+      'password': hashedPassword
+    };
+    const retailer = new Retailer(mockRetailer);
+    const savedRetailer = await retailer.save();
+    const cleanCpf = savedRetailer.cpf.replace(/[^\d]+/g,'');
+
+    await agent
+      .post('/retailers/login')
+      .send({"cpf":savedRetailer.cpf,"password":"password"})
+      .expect(200)
+      .then(async () => {
+        await agent
+          .get('/retailers/logout')
+          .expect(200)
+          .then((res) => {
+            expect(res.body).toHaveProperty('success');
+          });
       });
   });
 });
