@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb_container
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./tmp/mongodb_container:/data/mongodb_container
+  dev:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    container_name: dev_container
+    command: "yarn dev"
+    environment:
+      NODE_ENV: development
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mongodb
+    volumes:
+      - ./tmp/dev_container:/data/dev_container
+

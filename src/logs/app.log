@@ -1,6 +1,2 @@
-[2020-03-12T18:20:47.210Z] info: App listening on port 3000
-[2020-03-12T18:20:59.948Z] info: Retailer (CPF: 395.697.988-58) logged in.
-[2020-03-12T18:21:03.894Z] info: Retailer (CPF: 395.697.988-58) has checked its purchases info.
-[2020-03-12T18:21:30.046Z] info: Retailer (CPF: 395.697.988-58) has stored a new purchase.
-[2020-03-12T18:21:38.977Z] info: Retailer (CPF: 395.697.988-58) has checked its cashback info.
-[2020-03-12T18:21:49.144Z] info: Retailer (CPF: 395.697.988-58) logged out.
+[2020-03-12T18:50:17.098Z] info: App listening on port 3000
+[2020-03-12T19:19:41.371Z] info: App listening on port 3000
