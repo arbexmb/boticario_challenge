@@ -1,6 +1,7 @@
 const Purchase = require('./Purchase');
 const Retailer = require('../retailers/Retailer');
 const { cpf } = require('cpf-cnpj-validator');
+const logger = require('../../utils/logger.js');
 
 class PurchaseController {
   async store(req, res) {
@@ -26,6 +27,7 @@ class PurchaseController {
         retailer.purchases.push(purchase);
         retailer.save();
 
+        logger.info('Retailer (CPF: ' + retailer.cpf + ') has stored a new purchase.');
         res.status(201).json({ success: 'Created' });
       });
     });

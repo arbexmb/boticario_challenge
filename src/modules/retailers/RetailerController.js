@@ -2,6 +2,7 @@ const Retailer = require('./Retailer');
 const bcrypt = require('bcrypt');
 const request = require('request');
 const { cpf } = require('cpf-cnpj-validator');
+const logger = require('../../utils/logger.js');
 
 class RetailerController {
   async index(req, res) {
@@ -27,13 +28,14 @@ class RetailerController {
       };
 
       if(req.body.cpf === '153.509.460-56') {
-        req.body.status = 'Aprovado';
+        retailer.status = 'Aprovado';
       }
 
       const response = await Retailer.create(retailer, (err, response) => {
         if(err) {
           return res.send({ error: err.message });
         }
+        logger.info('A new retailer (CPF: ' + retailer.cpf + ') was created.');
         res.status(201).json({ success: 'Retailer successfully created.' });
       });
 
@@ -62,6 +64,9 @@ class RetailerController {
   }
 
   async login(req, res) {
+    if(req.session.retailer) {
+      return res.status(500).json({error: 'Please, logout from your current session, in order to login.'});
+    }
     const retailer = Retailer.find({cpf: req.body.cpf}, async (err, retailer) => {
       if(retailer.length < 1) {
         return res.status(404).json({ error: 'Cannot find retailer.' });
@@ -69,12 +74,13 @@ class RetailerController {
       try {
         if(await bcrypt.compare(req.body.password, retailer[0].password)) {
           req.session.retailer = retailer;
+          logger.info('Retailer (CPF: ' + retailer[0].cpf + ') logged in.');
           res.status(200).json({success: 'Success!'});
         } else {
           res.status(401).json({error: 'Not allowed.'});
         }
-      } catch {
-        res.status(500).send();
+      } catch(err) {
+        res.status(500).json({error: err.message});
       }
     });
   }
@@ -83,6 +89,8 @@ class RetailerController {
     if(!req.session.retailer) {
       return res.status(500).json({error: 'You are not logged in.'});
     }
+
+    logger.info('Retailer (CPF: ' + req.session.retailer[0].cpf + ') logged out.');
 
     req.session.retailer = null;
     res.status(200).json({ success: 'Logged out succesfully.' });
@@ -93,8 +101,9 @@ class RetailerController {
       return res.status(401).json({ error: 'You are not logged in.' });
     }
 
-    const retailer = await Retailer.findById(req.session.retailer[0]._id).populate('purchases').then((results) => {
-      res.status(200).json(results.purchases);
+    const retailer = await Retailer.findById(req.session.retailer[0]._id).populate('purchases').then((result) => {
+      logger.info('Retailer (CPF: ' + result.cpf + ') has checked its purchases info.');
+      res.status(200).json(result.purchases);
     }).catch((err) => {
       res.status(500).json({ error: err.message });
     });
@@ -105,12 +114,13 @@ class RetailerController {
       return res.status(400).json({error: 'You are not logged in.'});
     }
 
-    const retailer = await Retailer.findById(req.session.retailer[0]._id).populate('purchases').then((results) => {
+    const retailer = await Retailer.findById(req.session.retailer[0]._id).populate('purchases').then((result) => {
       let cashback = 0;
-      results.purchases.forEach((purchase) => {
+      result.purchases.forEach((purchase) => {
         const value = parseInt(purchase.cashback.value);
         cashback += value;
       });
+      logger.info('Retailer (CPF: ' + result.cpf + ') has checked its cashback info.');
       res.status(200).json({ cashback: cashback });
     }).catch((err) => {
       res.status(500).json({ error: err.message })
