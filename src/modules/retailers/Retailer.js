@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const RetailerSchema = new Schema(
   {
@@ -30,4 +31,5 @@ const RetailerSchema = new Schema(
   }
 );
 
+RetailerSchema.plugin(uniqueValidator);
 module.exports = model('Retailer', RetailerSchema);

@@ -3,7 +3,7 @@ const { Schema, model } = require('mongoose');
 const PurchaseSchema = new Schema(
   {
     status: {
-      value: Number,
+      type: Number,
     },
     value: {
       type: Number,

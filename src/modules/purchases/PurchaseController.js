@@ -75,7 +75,7 @@ class PurchaseController {
 
     Retailer.find({ cpf: cpfParam }).populate('purchases').then((retailer) => {
       if(!retailer.length) {
-        return res.status(404).send({ error: 'Retailer not found' });
+        return res.status(404).send({ error: 'There is no retailer with the informed CPF.' });
       }
       res.status(200).json(retailer[0].purchases);
     }).catch((err) => {

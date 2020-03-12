@@ -15,12 +15,14 @@ describe('Retailer', () => {
       useUnifiedTopology: true,
       useCreateIndex: true
     });
-    await mongoose.connection.db.dropDatabase();
   });
 
   afterAll(async () => {
-    await mongoose.connection.db.dropDatabase();
     await mongoose.connection.close();
+  });
+  
+  afterEach(async () => {
+    await mongoose.connection.db.dropDatabase();
   });
 
   it('a valid Retailer can be instantiated', async () => {
@@ -102,8 +104,8 @@ describe('Retailer', () => {
       err = error;
     }
 
-    //expect(err).toBeInstanceOf(mongoose.Error.ValidationError);
-    //expect(err.errors.cpf).toBeDefined();
+    expect(err).toBeInstanceOf(mongoose.Error.ValidationError);
+    expect(err.errors.cpf).toBeDefined();
   });
   
   it('an email is required in order to instantiate a Retailer', async () => {

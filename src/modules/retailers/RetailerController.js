@@ -81,7 +81,7 @@ class RetailerController {
 
   async logout(req, res) {
     if(!req.session.retailer) {
-      return res.status(400).json({error: 'You are not logged in.'});
+      return res.status(500).json({error: 'You are not logged in.'});
     }
 
     req.session.retailer = null;
@@ -90,7 +90,7 @@ class RetailerController {
 
   async purchases(req, res) {
     if(!req.session.retailer) {
-      return res.status(401).send();
+      return res.status(401).json({ error: 'You are not logged in.' });
     }
 
     const retailer = await Retailer.findById(req.session.retailer[0]._id).populate('purchases').then((results) => {

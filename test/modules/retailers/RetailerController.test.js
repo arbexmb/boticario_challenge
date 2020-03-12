@@ -24,7 +24,7 @@ describe('RetailerController', () => {
     await mongoose.connection.close();
   });
 
-  beforeEach(async () => {
+  afterEach(async () => {
     await mongoose.connection.db.dropDatabase();
   });
 
@@ -74,7 +74,7 @@ describe('RetailerController', () => {
       });
   });
 
-  it('a user can login into the application', async () => {
+  it('a retailer can login into the application', async () => {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash('password', salt);
     const mockRetailer = {
