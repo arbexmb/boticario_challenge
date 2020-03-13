@@ -72,7 +72,7 @@ A single retailer can be fetched by passing its CPF as a parameter on the GET re
 
 - POST: http://127.0.0.1:3000/retailers/login
 
-To log in to the application, the POST request above can be used, by sending a saved retailer through its body.
+To log in to the application, the POST request above can be used by sending a saved retailer through its body.
 
 ```json
 {
@@ -81,13 +81,13 @@ To log in to the application, the POST request above can be used, by sending a s
 }
 ```
 
-Once you login, you will be able to test the API's functionalities restricted to logged retailers, described on steps 5, 6, 7 and 8. Express-session is responsible for handling the session.
+Once you login, you will be able to test the API's functionalities which are restricted to logged in retailers, described on steps 5, 6, 7 and 8.
 
 #### 5. Store Logged In Retailer Purchase
 
 - POST: http://127.0.0.1:3000/purchases
 
-After logging in, the only thing you will need to send in order to store a purchase and attach it to the logged retailer, is the value of the purchase. The remainder is handled by the session properties.
+After logging in, the only thing you will need to send in order to store a purchase and attach it to the logged retailer, is the value of the purchase.
 
 ```json
 {
@@ -95,9 +95,11 @@ After logging in, the only thing you will need to send in order to store a purch
 }
 ```
 
-As requested, each purchase generates a cashback value. I have created a logic to handle the cashback amount using the specified criterias set on the challenge.
+The above request body is all you need to store a purchase and attach it to the logged in retailer. The relationship is set by using the session properties.
 
-**OBS:** I have also created an endpoint in which it is possible to store a purchase without being logged, by passing the CPF of the retailer who made it. You can check it on step 9.
+**OBS:** As requested, each purchase generates a cashback value. I have created a logic to handle the cashback amount for each purchase using the specified criterias set on the challenge.
+
+**OBS 2:** I have also created an endpoint in which it is possible to store a purchase without being logged in, only by passing the CPF of the retailer who made it. You can check it on step 9.
 
 #### 6. Get Logged In Retailer Purchases
 
@@ -144,19 +146,21 @@ Send the above GET request to fetch the purchases of a specific retailer, by pas
 
 - GET: http://127.0.0.1:3000/retailers/cashback/89006203041
 
-In addition to check the retailer cashback when logged in, it is possible to use the endpoint above to GET the total cashback of a retailer through its CPF.
+In addition to check the retailer cashback when logged in, it is possible to use the endpoint above to GET the total cashback of a retailer through its CPF. It is not necessary to be logged in.
 
 #### 12. Get Cashback Through External API
 
 - GET: http://127.0.0.1:3000/retailers/cashback-api/89006203041
 
-As requested, I have developed an endpoint to consume the external API provided by Boticário. The above request makes a request to the url provided on the challenge and returns the parsed response body back to the local application.
+As requested, I have developed an endpoint to consume the external API provided by Boticário. The route above makes a request to the url provided on the challenge and returns the parsed response body back to the local application.
 
 ## Application logs
 
 Last, but not least: the application logs.
 
-I have set the application logs using **winston**. There are a couple of commands you can use, in order to check them. If you wish to audit them live, while testing the application, run the following:
+I have set the application logs using **winston**. There are a couple of commands you can use in order to check them.
+
+If you wish to audit them live, while testing the application, run the following:
 
 ```
 # docker-compose exec development tail -f src/logs/app.log
@@ -170,4 +174,4 @@ However, if you wish to check the logs after testing the API, without live inter
 
 ## Conclusion
 
-As requested, the API in this repository provides a way to create retailers, purchases, fetch them both, bind them together, and handle each retailers cashback. I have tried my best to cover it with unit and integration tests, as well as make it easy to correct, by setting Docker containers on its infrastructure. Of course, there are a lot of tests, functionalities, and validations which I was not able to cover in the time I had to develop the application, however I hope what I did is enough to show my skills. 
+As requested, the API in this repository provides a way to create retailers, purchases, fetch them both, bind them together, and handle each retailer's purchase cashback. I have tried my best to cover it with unit and integration tests, as well as make it easy to correct, by setting Docker containers on its infrastructure. Of course, there are a lot of tests, functionalities, and validations which I was not able to cover in the time I had to develop the application, however I hope what I did is enough to show my skills.
