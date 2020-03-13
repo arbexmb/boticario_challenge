@@ -1,5 +1,8 @@
 version: '3'
 
+networks:
+  dev_network:
+    driver: bridge
 services:
   mongodb:
     image: mongo
@@ -8,7 +11,9 @@ services:
       - '27017:27017'
     volumes:
       - ./tmp/mongodb_container:/data/mongodb_container
-  dev:
+    networks:
+      - dev_network
+  development:
     build:
       dockerfile: ./Dockerfile
       context: .
@@ -22,4 +27,6 @@ services:
       - mongodb
     volumes:
       - ./tmp/dev_container:/data/dev_container
+    networks:
+      - dev_network
 
