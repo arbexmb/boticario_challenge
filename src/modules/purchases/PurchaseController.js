@@ -1,7 +1,7 @@
 const Purchase = require('./Purchase');
 const Retailer = require('../retailers/Retailer');
 const { cpf } = require('cpf-cnpj-validator');
-const logger = require('../../utils/logger.js');
+const logger = require('../../utils/logger');
 
 class PurchaseController {
   async store(req, res) {

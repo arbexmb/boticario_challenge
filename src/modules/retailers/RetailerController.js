@@ -2,7 +2,7 @@ const Retailer = require('./Retailer');
 const bcrypt = require('bcrypt');
 const request = require('request');
 const { cpf } = require('cpf-cnpj-validator');
-const logger = require('../../utils/logger.js');
+const logger = require('../../utils/logger');
 
 class RetailerController {
   async index(req, res) {
@@ -64,7 +64,7 @@ class RetailerController {
   }
 
   async login(req, res) {
-    if(req.session.retailer) {
+    if(req.session.retailer && process.env.NODE_ENV !== 'test') {
       return res.status(500).json({error: 'Please, logout from your current session, in order to login.'});
     }
     const retailer = Retailer.find({cpf: req.body.cpf}, async (err, retailer) => {
@@ -87,7 +87,7 @@ class RetailerController {
 
   async logout(req, res) {
     if(!req.session.retailer) {
-      return res.status(500).json({error: 'You are not logged in.'});
+      return res.status(401).json({error: 'You are not logged in.'});
     }
 
     logger.info('Retailer (CPF: ' + req.session.retailer[0].cpf + ') logged out.');
@@ -111,7 +111,7 @@ class RetailerController {
 
   async cashbackTotal(req, res) {
     if(!req.session.retailer) {
-      return res.status(400).json({error: 'You are not logged in.'});
+      return res.status(401).json({error: 'You are not logged in.'});
     }
 
     const retailer = await Retailer.findById(req.session.retailer[0]._id).populate('purchases').then((result) => {

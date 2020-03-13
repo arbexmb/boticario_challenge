@@ -110,7 +110,6 @@ describe('RetailerController', () => {
     };
     const retailer = new Retailer(mockRetailer);
     const savedRetailer = await retailer.save();
-    const cleanCpf = savedRetailer.cpf.replace(/[^\d]+/g,'');
 
     await agent
       .post('/retailers/login')
