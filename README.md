@@ -47,10 +47,10 @@ Firstly, it is necessary to create a retailer, in order to use any of the next A
 
 ```json
 {
-	"name": "José Silva",
-	"cpf": "890.062.030-41",
-	"email": "josesilva@email.com",
-	"password": "password"
+  "name": "José Silva",
+  "cpf": "890.062.030-41",
+  "email": "josesilva@email.com",
+  "password": "password"
 }
 ```
 
@@ -76,8 +76,8 @@ To log in to the application, the POST request above can be used by sending a sa
 
 ```json
 {
-	"cpf": "890.062.030-41",
-	"password": "password"
+  "cpf": "890.062.030-41",
+  "password": "password"
 }
 ```
 
@@ -91,7 +91,7 @@ After logging in, the only thing you will need to send in order to store a purch
 
 ```json
 {
-	"value": 240
+  "value": 240
 }
 ```
 
@@ -172,6 +172,11 @@ However, if you wish to check the logs after testing the API, without live inter
 # docker-compose exec development cat src/logs/app.log
 ```
 
+## Observation
+
+Please, note that the docker commands mentioned above must be run as root. And, also, ports 3000 and 27018 must be free in order to properly run the application and database containers.
+
 ## Conclusion
 
 As requested, the API in this repository provides a way to create retailers, purchases, fetch them both, bind them together, and handle each retailer's purchase cashback. I have tried my best to cover it with unit and integration tests, as well as make it easy to correct, by setting Docker containers on its infrastructure. Of course, there are a lot of tests, functionalities, and validations which I was not able to cover in the time I had to develop the application, however I hope what I did is enough to show my skills.
+
